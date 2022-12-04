@@ -66,7 +66,7 @@ func main() {
 			}
 
 			cpuUsage := scale(vraptorRsrc.CPU.CPUUsage, 0, 99, 0, 100)
-			temp := scale(vraptorTemp.Value, 30, 70, 0, 100)
+			temp := scale(vraptorTemp.Value, 20, 60, 0, 100)
 			if _, err := fmt.Fprintf(
 				gauge,
 				"A=%d,%d\r\n", int(cpuUsage+0.5), int(temp+0.5),
@@ -88,6 +88,9 @@ func main() {
 
 func scale(v, fromLow, fromHigh, toLow, toHigh float64) float64 {
 	ret := (v-fromLow)/(fromHigh-fromLow)*(toHigh-toLow) + toLow
+	if ret < toLow {
+		ret = toLow
+	}
 	if ret > toHigh {
 		ret = toHigh
 	}
