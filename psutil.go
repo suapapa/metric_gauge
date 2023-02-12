@@ -8,8 +8,13 @@ import (
 	"github.com/shirou/gopsutil/v3/mem"
 )
 
-func getMemoryUsage(ctx context.Context) chan float64 {
-	ch := make(chan float64)
+type Metrics struct {
+	Cpu float64
+	Mem float64
+}
+
+func getMetrics(ctx context.Context) chan *Metrics {
+	ch := make(chan *Metrics)
 	go func(ctx context.Context) {
 		tk := time.NewTicker(duration)
 		defer tk.Stop()
@@ -19,25 +24,8 @@ func getMemoryUsage(ctx context.Context) chan float64 {
 				return
 			case <-tk.C:
 				v, _ := mem.VirtualMemory()
-				ch <- v.UsedPercent
-			}
-		}
-	}(ctx)
-	return ch
-}
-
-func getCpuPercent(ctx context.Context) chan float64 {
-	ch := make(chan float64)
-	go func(ctx context.Context) {
-		tk := time.NewTicker(duration)
-		defer tk.Stop()
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-tk.C:
-				v, _ := cpu.PercentWithContext(ctx, 1*time.Second, false)
-				ch <- v[0]
+				c, _ := cpu.PercentWithContext(ctx, 1*time.Second, false)
+				ch <- &Metrics{Cpu: c[0], Mem: v.UsedPercent}
 			}
 		}
 	}(ctx)

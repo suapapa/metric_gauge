@@ -22,7 +22,7 @@ var (
 
 func main() {
 	flag.StringVar(&fSerialPort, "s", "/dev/ttyUSB0", "Serial port to use")
-	flag.StringVar(&fIntervalStr, "i", "1s", "Interval to update gauges")
+	flag.StringVar(&fIntervalStr, "i", "5s", "Interval to update gauges")
 	flag.Parse()
 
 	log.Println("Opening serial port...")
@@ -38,21 +38,19 @@ func main() {
 
 	ctx, cancelF := context.WithCancel(context.Background())
 	defer cancelF()
-	memCh := getMemoryUsage(ctx)
-	cpuCh := getCpuPercent(ctx)
+	mCh := getMetrics(ctx)
 
 	log.Println("Updating gauges...")
 	go func(ctx context.Context) {
 		for {
 			select {
-			case mem := <-memCh:
-				log.Printf("mem: %f", mem)
-				if _, err := fmt.Fprintf(gauge, "A2=%d\r\n", int(mem+0.5)); err != nil {
-					log.Println(err)
-				}
-			case cpu := <-cpuCh:
-				log.Printf("cpu: %f", cpu)
-				if _, err := fmt.Fprintf(gauge, "A1=%d\r\n", int(cpu+0.5)); err != nil {
+			case m := <-mCh:
+				log.Printf("cpu %f, mem: %f", m.Cpu, m.Mem)
+				if _, err := fmt.Fprintf(
+					gauge,
+					"A=%d,%d\r\n",
+					int(m.Cpu+0.5), int(m.Mem+0.5),
+				); err != nil {
 					log.Println(err)
 				}
 			case <-ctx.Done():
