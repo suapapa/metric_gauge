@@ -1,4 +1,6 @@
-# metric_gauge - Analog gauge to display merchine metrics
+# metric_gauge - Analog gauge to display machine metrics
+
+![metric_gauge](_img/metric_gauge.jpg)
 
 ## Arduino
 
