@@ -3,8 +3,16 @@ module github.com/vraptor_monitor_gauge
 go 1.19
 
 require (
-	github.com/pkg/errors v0.9.1
+	github.com/shirou/gopsutil/v3 v3.23.1
 	github.com/tarm/serial v0.0.0-20180830185346-98f6abe2eb07
 )
 
-require golang.org/x/sys v0.3.0 // indirect
+require (
+	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
+	github.com/power-devops/perfstat v0.0.0-20210106213030-5aafc221ea8c // indirect
+	github.com/tklauser/go-sysconf v0.3.11 // indirect
+	github.com/tklauser/numcpus v0.6.0 // indirect
+	github.com/yusufpapurcu/wmi v1.2.2 // indirect
+	golang.org/x/sys v0.4.0 // indirect
+)
