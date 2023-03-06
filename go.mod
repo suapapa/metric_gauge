@@ -1,4 +1,4 @@
-module github.com/vraptor_monitor_gauge
+module github.com/suapapa/metric_gauge
 
 go 1.19
 
